@@ -61,7 +61,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-22.11
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-      - uses: apple-actions/import-codesign-certs@v1
+      - uses: apple-actions/import-codesign-certs@v3
         with:
           p12-file-base64: ${{ secrets.MAC_CODE_SIGN_CERT }}
           p12-password: ${{ secrets.MAC_CODE_SIGN_CERT_PASS }}
@@ -82,7 +82,7 @@ jobs:
           # build binaries
           ./scripts/release.sh
 
-          codesign
+          # codesign
           for tarball in *.tar.gz;
           do
             ./scripts/codesign_macos.sh $tarball

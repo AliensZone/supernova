@@ -37,11 +37,10 @@
         in
         rec {
           packages = pkgs.cronos-matrix // {
-            inherit (pkgs) rocksdb;
+            inherit (pkgs) rocksdb testground-image;
           };
           apps = {
             supernovad = mkApp packages.supernovad;
-            # cronosd-testnet = mkApp packages.cronosd-testnet;
           };
           defaultPackage = packages.supernovad;
           defaultApp = apps.supernovad;

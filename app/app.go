@@ -137,6 +137,7 @@ import (
 	evmante "github.com/evmos/ethermint/app/ante"
 	evmenc "github.com/evmos/ethermint/encoding"
 	"github.com/evmos/ethermint/ethereum/eip712"
+	servercfg "github.com/evmos/ethermint/server/config"
 	srvflags "github.com/evmos/ethermint/server/flags"
 	ethermint "github.com/evmos/ethermint/types"
 	"github.com/evmos/ethermint/x/evm"
@@ -165,6 +166,7 @@ import (
 	e2ee "github.com/crypto-org-chain/cronos/v2/x/e2ee"
 	e2eekeeper "github.com/crypto-org-chain/cronos/v2/x/e2ee/keeper"
 	e2eetypes "github.com/crypto-org-chain/cronos/v2/x/e2ee/types"
+	"github.com/ethereum/go-ethereum/common"
 
 	// force register the extension json-rpc.
 	_ "github.com/crypto-org-chain/cronos/v2/x/cronos/rpc"
@@ -289,7 +291,7 @@ type App struct {
 
 	invCheckPeriod uint
 
-	pendingTxListeners []evmapp.PendingTxListener
+	pendingTxListeners []evmante.PendingTxListener
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -371,9 +373,14 @@ func New(
 	// NOTE we use custom transaction decoder that supports the sdk.Tx interface instead of sdk.StdTx
 	// Setup Mempool and Proposal Handlers
 	baseAppOptions = append(baseAppOptions, func(app *baseapp.BaseApp) {
+		maxTxs := cast.ToInt(appOpts.Get(server.FlagMempoolMaxTxs))
+		if maxTxs <= 0 {
+			maxTxs = servercfg.DefaultMaxTxs
+		}
 		mempool := mempool.NewPriorityMempool(mempool.PriorityNonceMempoolConfig[int64]{
 			TxPriority:      mempool.NewDefaultTxPriority(),
 			SignerExtractor: evmapp.NewEthSignerExtractionAdapter(mempool.NewDefaultSignerExtractionAdapter()),
+			MaxTx:           maxTxs,
 		})
 		handler := baseapp.NewDefaultProposalHandler(mempool, app)
 
@@ -384,6 +391,10 @@ func New(
 
 	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
 	baseAppOptions = memiavlstore.SetupMemIAVL(logger, homePath, appOpts, false, false, baseAppOptions)
+
+	// enable optimistic execution
+	baseAppOptions = append(baseAppOptions, baseapp.SetOptimisticExecution())
+
 	// NOTE we use custom transaction decoder that supports the sdk.Tx interface instead of sdk.StdTx
 	bApp := baseapp.NewBaseApp(Name, logger, db, txConfig.TxDecoder(), baseAppOptions...)
 
@@ -696,6 +707,7 @@ func New(
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	// Add controller & ica auth modules to IBC router
+	// Add controller & ica auth modules to IBC router
 	ibcRouter.
 		AddRoute(icaauthtypes.ModuleName, icaControllerStack).
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
@@ -931,12 +943,6 @@ func New(
 	app.MountMemoryStores(memKeys)
 	app.MountObjectStores(okeys)
 
-	// load state streaming if enabled
-	if err := app.RegisterStreamingServices(appOpts, keys); err != nil {
-		fmt.Printf("failed to load state streaming: %s", err)
-		os.Exit(1)
-	}
-
 	// wire up the versiondb's `StreamingService` and `MultiStore`.
 	if cast.ToBool(appOpts.Get("versiondb.enable")) {
 		var err error
@@ -1054,7 +1060,8 @@ func (app *App) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64, bl
 			sdk.MsgTypeURL(&evmtypes.MsgEthereumTx{}),
 			sdk.MsgTypeURL(&vestingtypes.MsgCreateVestingAccount{}),
 		},
-		ExtraDecorators: []sdk.AnteDecorator{blockAddressDecorator},
+		ExtraDecorators:   []sdk.AnteDecorator{blockAddressDecorator},
+		PendingTxListener: app.onPendingTx,
 	}
 
 	anteHandler, err := evmante.NewAnteHandler(options)
@@ -1220,6 +1227,7 @@ func (app *App) SimulationManager() *module.SimulationManager {
 // API server.
 func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
+	app.EvmKeeper.WithChainIDString(clientCtx.ChainID)
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	// Register new tendermint queries routes from grpc-gateway.
@@ -1284,19 +1292,15 @@ func (app *App) AutoCliOpts() autocli.AppOptions {
 	}
 }
 
-// RegisterPendingTxListener is used by json-rpc server to listen to pending transactions in CheckTx.
-func (app *App) RegisterPendingTxListener(listener evmapp.PendingTxListener) {
+// RegisterPendingTxListener is used by json-rpc server to listen to pending transactions callback.
+func (app *App) RegisterPendingTxListener(listener evmante.PendingTxListener) {
 	app.pendingTxListeners = append(app.pendingTxListeners, listener)
 }
 
-func (app *App) CheckTx(req *abci.RequestCheckTx) (*abci.ResponseCheckTx, error) {
-	res, err := app.BaseApp.CheckTx(req)
-	if err == nil && res.Code == 0 && req.Type == abci.CheckTxType_New {
-		for _, listener := range app.pendingTxListeners {
-			listener(req.Tx)
-		}
+func (app *App) onPendingTx(hash common.Hash) {
+	for _, listener := range app.pendingTxListeners {
+		listener(hash)
 	}
-	return res, err
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

@@ -40,7 +40,7 @@ from .utils import (
 
 def test_ica_enabled(cronos, tmp_path):
     cli = cronos.cosmos_cli()
-    p = cli.query_icacontroller_params()
+    p = cli.query_ica_params()
     assert p["controller_enabled"]
     p["controller_enabled"] = False
     proposal = tmp_path / "proposal.json"
@@ -65,7 +65,7 @@ def test_ica_enabled(cronos, tmp_path):
     assert rsp["code"] == 0, rsp["raw_log"]
     approve_proposal(cronos, rsp["events"])
     print("check params have been updated now")
-    p = cli.query_icacontroller_params()
+    p = cli.query_ica_params()
     assert not p["controller_enabled"]
 
 
@@ -283,7 +283,7 @@ def test_statesync(cronos):
         == initial_balance + tx_value + tx_value
     )
 
-    print("succesfully syncing")
+    print("successfully syncing")
     clustercli.supervisor.stopProcess(f"{clustercli.chain_id}-node{i}")
 
 
@@ -572,7 +572,7 @@ def test_exception(cluster):
     receipt = send_transaction(
         w3, contract.functions.transfer(5 * (10**18)).build_transaction()
     )
-    assert receipt.status == 1, "should be succesfully"
+    assert receipt.status == 1, "should be successfully"
     assert 5 * (10**18) == contract.caller.query()
 
 

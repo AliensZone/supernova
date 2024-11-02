@@ -2,10 +2,29 @@
 
 ## UNRELEASED
 
+### Features
+
+* [#1665](https://github.com/crypto-org-chain/cronos/pull/1665) Support register for payee and counterpartyPayee in relayer precompile.
+
+### Improvements
+
+* [#1664](https://github.com/crypto-org-chain/cronos/pull/1664) Update cometbft to 0.38.13.
+* [#1660](https://github.com/crypto-org-chain/cronos/pull/1660) Support async check tx.
+* [#1667](https://github.com/crypto-org-chain/cronos/pull/1667) Add testnet benchmark command.
+* [#1669](https://github.com/crypto-org-chain/cronos/pull/1669) Add performance optimizations: a) async fireEvents, b) faster prepare proposal when using NopMempool, c) parallel check-tx
+
+*Oct 24, 2024*
+
+## v1.4.0-rc2
+
 ### Bug Fixes
 
 * (testground)[1649](https://github.com/crypto-org-chain/cronos/pull/1649) Fix running single validator benchmark locally.
 * (cli)[#1647](https://github.com/crypto-org-chain/cronos/pull/1647) Fix node can't shutdown by signal.
+* (testground)[#1652](https://github.com/crypto-org-chain/cronos/pull/1652) Remove unexpected conflicts in benchmark transactions.
+* [#1654](https://github.com/crypto-org-chain/cronos/pull/1654) Set relayer as payee for relayer caller when enabled incentivized packet.
+* [#1655](https://github.com/crypto-org-chain/cronos/pull/1655) Fix state overwrite in debug trace APIs.
+* [#1663](https://github.com/crypto-org-chain/cronos/pull/1663) Align attributes for ibc timeout event.
 
 ### Improvements
 
@@ -14,6 +33,9 @@
 * [#1648](https://github.com/crypto-org-chain/cronos/pull/1648) Add abort OE in PrepareProposal.
 * (testground)[#1651](https://github.com/crypto-org-chain/cronos/pull/1651) Benchmark use cosmos broadcast rpc.
 * (testground)[#1650](https://github.com/crypto-org-chain/cronos/pull/1650) Benchmark support batch mode.
+* [#1658](https://github.com/crypto-org-chain/cronos/pull/1658) Optimize when block-list is empty.
+* (testground)[#1659](https://github.com/crypto-org-chain/cronos/pull/1659) Support skip check-tx in benchmark.
+* [#1662](https://github.com/crypto-org-chain/cronos/pull/1662) Emit more packet info for ibc relayer event.
 
 *Oct 14, 2024*
 

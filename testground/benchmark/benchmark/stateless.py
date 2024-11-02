@@ -286,7 +286,7 @@ def do_run(
     print("start node")
     logfile = open(home / "node.log", "ab", buffering=0)
     proc = subprocess.Popen(
-        [cronosd, "start", "--home", str(home)],
+        [cronosd, "start", "--home", str(home), "--async-check-tx"],
         stdout=logfile,
     )
 
@@ -300,7 +300,7 @@ def do_run(
         print("sent", len(txs), "txs")
 
     # node quit when the chain is idle or halted for a while
-    detect_idle_halted(cfg["num_idle"], 20)
+    detect_idle_halted(cfg["num_idle"], 5)
 
     with (home / "block_stats.log").open("w") as logfile:
         dump_block_stats(logfile)

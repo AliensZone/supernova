@@ -64,9 +64,9 @@ buildGoApplication rec {
     ''}
 
     # Rename the binary to supernovad if on Windows
-    ${lib.optionalString (isWindows) ''
-      mv $out/bin/cronosd.exe $out/bin/supernovad.exe
-    ''}
+    # ${lib.optionalString (isWindows) ''
+    #   mv $out/bin/cronosd.exe $out/bin/supernovad.exe
+    # ''}
     
     # Rename the binary to supernovad if on Linux
     ${lib.optionalString (isLinux) ''
@@ -77,7 +77,7 @@ buildGoApplication rec {
   doCheck = false;
   meta = with lib; {
     description = "Supernova EVM extension-chain";
-    homepage = "https://cronos.org/";
+    homepage = "https://zenon.network/";
     license = licenses.asl20;
     mainProgram = "supernovad" + stdenv.hostPlatform.extensions.executable;
     platforms = platforms.all;

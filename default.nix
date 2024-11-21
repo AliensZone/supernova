@@ -12,7 +12,7 @@
   nativeByteOrder ? true, # nativeByteOrder mode will panic on big endian machines
 }:
 let
-  version = "v0.0.2";
+  version = "v0.0.8";
   pname = "supernovad";
   tags = [ "ledger" "netgo" network "rocksdb" "grocksdb_no_link" "pebbledb" "objstore" ] ++ lib.optionals nativeByteOrder [ "nativebyteorder" ];
   ldflags = lib.concatStringsSep "\n" ([

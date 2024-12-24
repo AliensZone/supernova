@@ -4,6 +4,20 @@
 
 ### Bug Fixes
 
+* [#1720](https://github.com/crypto-org-chain/cronos/pull/1720) Include the fix of performance regression after upgrade in iavl.
+* [#1725](https://github.com/crypto-org-chain/cronos/pull/1725) Include the fix of deadlock when close tree in iavl.
+* [#1724](https://github.com/crypto-org-chain/cronos/pull/1724) Include the fix of nonce management in batch tx in ethermint.
+
+### State Machine Breaking
+
+* [#1722](https://github.com/crypto-org-chain/cronos/pull/1722) Include a security patch from cosmos sdk.
+
+*Dec 9, 2024*
+
+## v1.4.1
+
+### Bug Fixes
+
 * [#1714](https://github.com/crypto-org-chain/cronos/pull/1714) Avoid nil pointer error when query blocks before feemarket module gets enabled.
 * [#1713](https://github.com/crypto-org-chain/cronos/pull/1713) Register legacy codec to allow query historical txs whose modules are removed (icaauth, authz).
 

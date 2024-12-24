@@ -15,7 +15,7 @@ require (
 	cosmossdk.io/x/evidence v0.1.1
 	cosmossdk.io/x/feegrant v0.1.1
 	cosmossdk.io/x/upgrade v0.1.4
-	filippo.io/age v1.1.1
+	filippo.io/age v1.2.1
 	github.com/99designs/keyring v1.2.2
 	github.com/cometbft/cometbft v0.38.15
 	github.com/cosmos/cosmos-db v1.0.3-0.20240408151834-e75f6e4b28d8
@@ -89,7 +89,7 @@ require (
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
-	github.com/cosmos/iavl v1.2.2 // indirect
+	github.com/cosmos/iavl v1.2.4-0.20241218014611-3b0ad9922f9f // indirect
 	github.com/cosmos/ics23/go v0.11.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.3 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
@@ -257,9 +257,9 @@ require (
 
 // release/v0.50.x
 replace (
-	cosmossdk.io/store => github.com/crypto-org-chain/cosmos-sdk/store v0.0.0-20241205052910-142c0afa4948
-	cosmossdk.io/x/tx => github.com/crypto-org-chain/cosmos-sdk/x/tx v0.0.0-20241205052910-142c0afa4948
-	github.com/cosmos/cosmos-sdk => github.com/crypto-org-chain/cosmos-sdk v0.43.0-beta1.0.20241205052910-142c0afa4948
+	cosmossdk.io/store => github.com/crypto-org-chain/cosmos-sdk/store v0.0.0-20241217090828-cfbca9fe8254
+	cosmossdk.io/x/tx => github.com/crypto-org-chain/cosmos-sdk/x/tx v0.0.0-20241217090828-cfbca9fe8254
+	github.com/cosmos/cosmos-sdk => github.com/crypto-org-chain/cosmos-sdk v0.43.0-beta1.0.20241217090828-cfbca9fe8254
 )
 
 replace (
@@ -278,7 +278,7 @@ replace (
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/ethereum/go-ethereum => github.com/alienc0der/go-ethereum v1.10.20-0.20241121104049-bf894b98f78a
 	// release/v1.4.x
-	github.com/evmos/ethermint => github.com/alienc0der/ethermint v0.6.1-0.20241121112834-f9c5a5827157
+	github.com/evmos/ethermint => github.com/alienc0der/ethermint v0.6.1-0.20241121112834-e5d09c4524ec
 	// Fix upstream GHSA-h395-qcrw-5vmq and GHSA-3vp4-m3rf-835h vulnerabilities.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
